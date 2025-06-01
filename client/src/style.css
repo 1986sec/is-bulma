@@ -1,0 +1,16 @@
+/*
+  Özel stiller için style.css
+  Burada Tailwind ile birlikte kullanılacak ek stilleri tanımlayabilirsiniz.
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition;
+}
+
+.card {
+  @apply bg-white shadow rounded p-4 mb-4;
+} 
