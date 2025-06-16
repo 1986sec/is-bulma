@@ -1,21 +1,75 @@
 const jwt = require('jsonwebtoken');
+const { AppError } = require('./error.js');
+const { User } = require('../models/User.js');
+const config = require('../config');
+const logger = require('../utils/logger');
+const user = require('../utils/user');
 
-function authMiddleware(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ mesaj: 'Token gerekli' });
+module.exports = async (req, res, next) => {
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    // Token'ı al
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      throw new Error('Token bulunamadı');
+    }
+
+    // Token'ı doğrula
+    const decoded = jwt.verify(token, config.jwt.secret);
+
+    // Kullanıcıyı bul
+    const user = await user.getUser(decoded.id);
+
+    if (!user) {
+      throw new Error('Kullanıcı bulunamadı');
+    }
+
+    if (user.status !== 'active') {
+      throw new Error('Hesap aktif değil');
+    }
+
+    // 4) Check if user changed password after the token was issued
+    if (user.changedPasswordAfter(decoded.iat)) {
+      return next(
+        new AppError(
+          'User recently changed password! Please log in again.',
+          401
+        )
+      );
+    }
+
+    // Kullanıcıyı request'e ekle
+    req.user = user;
+
+    logger.debug('Kullanıcı doğrulandı:', {
+      userId: user.id,
+    });
+
     next();
-  } catch {
-    res.status(401).json({ mesaj: 'Geçersiz token' });
+  } catch (error) {
+    logger.error('Kimlik doğrulama hatası:', {
+      error: error.message,
+    });
+
+    res.status(401).json({
+      error: {
+        message: 'Kimlik doğrulama başarısız',
+        status: 401,
+      },
+    });
   }
-}
+};
 
-function adminMiddleware(req, res, next) {
-  authMiddleware(req, res, () => {
-    if (req.user.rol !== 'admin') return res.status(403).json({ mesaj: 'Yetkisiz' });
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          'You do not have permission to perform this action',
+          403
+        )
+      );
+    }
     next();
-  });
-}
-
-module.exports = { authMiddleware, adminMiddleware }; 
+  };
+}; 
