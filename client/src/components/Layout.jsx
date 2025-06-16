@@ -39,7 +39,7 @@ const Layout = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background text-text">
+        <div className={`min-h-screen ${darkMode ? 'bg-black text-primary-300' : 'bg-white text-primary'} transition-colors duration-200`}>
             <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
             <main className="container mx-auto px-4 py-8">
                 <Outlet />
