@@ -28,24 +28,19 @@ const App = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route
-        path="/"
+      <Route path="/"
         element={
-          <PrivateRoute>
-            <Layout>
-              <Home />
-            </Layout>
-          </PrivateRoute>
+          <Layout>
+            <Home />
+          </Layout>
         }
       />
       <Route
         path="/jobs"
         element={
-          <PrivateRoute>
-            <Layout>
-              <Jobs />
-            </Layout>
-          </PrivateRoute>
+          <Layout>
+            <Jobs />
+          </Layout>
         }
       />
       <Route
