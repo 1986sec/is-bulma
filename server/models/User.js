@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
     default: 'active',
     index: true
   },
+  isPremium: {
+    type: Boolean,
+    default: false,
+  },
   profile: {
     title: String,
     bio: String,

@@ -15,12 +15,8 @@ const config = {
 
   // Veritabanı ayarları
   database: {
-    uri: process.env.MONGODB_URI || 'MONGODB_URI=mongodb+srv://1986sec:u9J8d15osrzj1QhU@cluster0.3j20qye.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    uri: process.env.MONGODB_URI || 'mongodb+srv://1986sec:<db_password>@cluster0.3j20qye.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     options: {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
       autoIndex: process.env.NODE_ENV === 'development',
       maxPoolSize: 10,
       minPoolSize: 5,

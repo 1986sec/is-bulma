@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const companySchema = new Schema({
   name: {
@@ -84,6 +84,10 @@ const companySchema = new Schema({
     type: String,
     enum: ['active', 'inactive', 'pending', 'suspended'],
     default: 'pending',
+  },
+  isPremium: {
+    type: Boolean,
+    default: false,
   },
   verified: {
     type: Boolean,
@@ -201,8 +205,6 @@ const companySchema = new Schema({
 // İndeksler
 companySchema.index({ name: 'text', description: 'text' });
 companySchema.index({ location: '2dsphere' });
-companySchema.index({ slug: 1 });
-companySchema.index({ email: 1 });
 companySchema.index({ status: 1 });
 companySchema.index({ verified: 1 });
 companySchema.index({ featured: 1 });
@@ -273,4 +275,4 @@ companySchema.methods.updateStats = async function() {
 
 const Company = mongoose.model('Company', companySchema);
 
-module.exports = Company; 
+export default Company; 
